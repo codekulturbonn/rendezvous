@@ -3,6 +3,8 @@
  */
 import * as THREE from 'three/build/three.module.js';
 
+const PI = 3.141592;
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x333333);
 scene.add( new THREE.AxesHelper(5) );
@@ -16,38 +18,128 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-const orbiter = new THREE.Group();
-const material = new THREE.MeshLambertMaterial();
+function makeOrbiter() {
+    const orbiter = new THREE.Group();
+    const material = new THREE.MeshLambertMaterial();
+    
+    const bottom = new THREE.Mesh(
+        new THREE.CylinderGeometry( 1, 1, 2, 10 ), 
+        material
+    );
+    orbiter.add( bottom );
+    
+    const top = new THREE.Mesh(
+        new THREE.ConeGeometry( 1, PI / 2, 10 ), 
+        material
+    );
+    top.position.set( 0, 1.8, 0 );
+    orbiter.add( top );
+    
+    const engine = new THREE.Mesh(
+        new THREE.ConeGeometry( 0.5, 1, 10 ), 
+        material
+    );
+    engine.position.set( 0, -1, 0 );
+    orbiter.add( engine );
+    
+    orbiter.position.set(-2, 0, 0);
+    orbiter.rotation.set(0, 0, -PI / 2);
 
-const bottom = new THREE.Mesh(
-    new THREE.CylinderGeometry( 1, 1, 2, 10 ), 
-    material
-);
-orbiter.add( bottom );
+    return orbiter;
+}
 
-const top = new THREE.Mesh(
-    new THREE.ConeGeometry( 1, 1.6, 10 ), 
-    material
-);
-top.position.set( 0, 1.8, 0 );
-orbiter.add( top );
+function makeLander() {
+    const lander = new THREE.Group();
+    const material = new THREE.MeshLambertMaterial();
 
-const engine = new THREE.Mesh(
-    new THREE.ConeGeometry( 0.5, 1, 10 ), 
-    material
-);
-engine.position.set( 0, -1, 0 );
-orbiter.add( engine );
+    const body = new THREE.Mesh(
+        new THREE.SphereGeometry( 1, 6, 6 ), 
+        material 
+    );
 
-orbiter.position.set(-2, 0, 0);
-orbiter.rotation.set(0, 0, -3.141592 / 2);
+    const leg1 = new THREE.Mesh(
+        new THREE.CylinderGeometry( 0.1, 0.1, 4, 4 ),
+        material
+    );
+    const leg2 = new THREE.Mesh(
+        new THREE.CylinderGeometry( 0.1, 0.1, 4, 4 ),
+        material
+    );
+    const leg3 = new THREE.Mesh(
+        new THREE.CylinderGeometry( 0.1, 0.1, 4, 4 ),
+        material
+    );
 
-scene.add( orbiter );
+    lander.add( body );
+    lander.add( leg1 );
+    lander.add( leg2 );
+    lander.add( leg3 );
+
+    lander.position.set(3, 0, 0);
+
+    leg1.rotation.set(0, 0, -PI / 2);
+    leg1.position.set(2, 0, 0);
+
+    leg2.rotation.set(0, 0, -PI / 4);
+    leg2.position.set(2, 2, 0);
+
+    leg3.rotation.set(0, 0, -PI * 3 / 4);
+    leg3.position.set(1, -1, 0);
+
+    return lander;
+}
+
+scene.add( makeOrbiter() );
+
+const lander = makeLander();
+
+scene.add( lander );
 
 camera.position.z = 5;
 
+const info = document.querySelector('#info');
+const theend = document.querySelector('#theend');
+let speed = 0.004; 
+let fuel = 3;
+
+document.onkeydown = function(e) {
+    if (fuel <= 0) {
+        return;
+    }
+    switch (e.keyCode) {
+    case 37:
+        speed += 0.003;
+        break;
+    case 39:
+        speed -= 0.003;
+        break;
+    };
+    fuel -= 1;
+};
+
 function animate() {
     requestAnimationFrame( animate );
+
+    if (lander.position.x <= PI / 2) {
+        if (speed > 0.001 || speed < -0.001) {
+            theend.style.color = 'red';
+            theend.innerHTML = 'You loose';                
+        }
+        else {
+            theend.style.color = 'green';
+            theend.innerHTML = 'You win';
+        }
+        theend.style.display = 'block';
+    }
+    else {
+        lander.position.x -= 0.004;
+        lander.rotation.x -= speed;
+    }
+
+    info.innerHTML = `
+    <p>Abstand: ${Math.round((lander.position.x  - PI / 2) * 10)}m</p>
+    <p>Drehung: ${speed * 1000}</p>
+    <p>Treibstoff: ${fuel}</p>`;
 
     renderer.render( scene, camera );
 };
