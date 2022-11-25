@@ -4,7 +4,7 @@
   },
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build --dist-dir docs index.html"
+    "build": "parcel build --dist-dir docs --public-url /rendezvous index.html"
   },
   "dependencies": {
     "three": "^0.146.0"
