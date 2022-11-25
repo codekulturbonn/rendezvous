@@ -132,7 +132,7 @@ function animate() {
         theend.style.display = 'block';
     }
     else {
-        lander.position.x -= 0.004;
+        lander.position.x -= 0.008;
         lander.rotation.x -= speed;
     }
 
