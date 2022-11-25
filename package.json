@@ -3,7 +3,7 @@
     "parcel": "^2.8.0"
   },
   "scripts": {
-    "start": "parcel --dist-dir docs index.html",
+    "start": "parcel --dist-dir docs --public-url /rendezvous index.html",
     "build": "parcel build --dist-dir docs --public-url /rendezvous index.html"
   },
   "dependencies": {
