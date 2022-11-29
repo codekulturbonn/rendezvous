@@ -533,9 +533,10 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"5JiMD":[function(require,module,exports) {
 /**
- * Redezvous - A space game.
+ * Rendezvous - A space game.
  */ var _threeModuleJs = require("three/build/three.module.js");
 const PI = 3.141592;
+let gameState = "play";
 const scene = new _threeModuleJs.Scene();
 scene.background = new _threeModuleJs.Color(0x333333);
 scene.add(new _threeModuleJs.AxesHelper(5));
@@ -572,13 +573,13 @@ function makeLander() {
     lander.add(leg1);
     lander.add(leg2);
     lander.add(leg3);
-    lander.position.set(3, 0, 0);
     leg1.rotation.set(0, 0, -PI / 2);
     leg1.position.set(2, 0, 0);
     leg2.rotation.set(0, 0, -PI / 4);
     leg2.position.set(2, 2, 0);
     leg3.rotation.set(0, 0, -PI * 3 / 4);
     leg3.position.set(1, -1, 0);
+    setUpLander(lander);
     return lander;
 }
 scene.add(makeOrbiter());
@@ -587,41 +588,63 @@ scene.add(lander);
 camera.position.z = 5;
 const info = document.querySelector("#info");
 const theend = document.querySelector("#theend");
-let speed = 0.004;
-let fuel = 3;
+let speed;
+let fuel;
 document.onkeydown = function(e) {
-    if (fuel <= 0) return;
-    switch(e.keyCode){
-        case 37:
-            speed += 0.003;
-            break;
-        case 39:
-            speed -= 0.003;
-            break;
-    }
-    fuel -= 1;
-};
-function animate() {
-    requestAnimationFrame(animate);
-    if (lander.position.x <= PI / 2) {
-        if (speed > 0.001 || speed < -0.001) {
-            theend.style.color = "red";
-            theend.innerHTML = "You loose";
-        } else {
-            theend.style.color = "green";
-            theend.innerHTML = "You win";
+    if (gameState === "play") {
+        if (fuel <= 0) return;
+        switch(e.keyCode){
+            case 37:
+                speed += 0.003;
+                break;
+            case 39:
+                speed -= 0.003;
+                break;
         }
-        theend.style.display = "block";
+        fuel -= 1;
     } else {
-        lander.position.x -= 0.008;
-        lander.rotation.x -= speed;
+        // reset
+        gameState = "play";
+        setUp();
+        setUpLander(lander);
+        theend.style.display = "none";
+        animate();
     }
-    info.innerHTML = `
-    <p>Abstand: ${Math.round((lander.position.x - PI / 2) * 10)}m</p>
-    <p>Drehung: ${speed * 1000}</p>
-    <p>Treibstoff: ${fuel}</p>`;
-    renderer.render(scene, camera);
+};
+function setUpLander(lander) {
+    lander.position.set(3, 0, 0);
 }
+function setUp() {
+    speed = 0.004;
+    fuel = 3;
+}
+function animate() {
+    if (gameState === "play") {
+        if (lander.position.x <= PI / 2) {
+            gameState = "theEnd";
+            if (speed > 0.001 || speed < -0.001) {
+                theend.style.color = "red";
+                theend.innerHTML = "You loose<br>press any key to restart";
+            } else {
+                theend.style.color = "green";
+                theend.innerHTML = "You win<br>press any key to restart";
+            }
+            theend.style.display = "block";
+        } else {
+            lander.position.x -= 0.008;
+            lander.rotation.x -= speed;
+        }
+        info.innerHTML = `
+            <p>Abstand: ${Math.round((lander.position.x - PI / 2) * 10)}m</p>
+            <p>Drehung: ${speed * 1000}</p>
+            <p>Treibstoff: ${fuel}</p>
+        `;
+        renderer.render(scene, camera);
+        // call self for loop
+        requestAnimationFrame(animate);
+    }
+}
+setUp();
 animate();
 
 },{"three/build/three.module.js":"ktPTu"}],"ktPTu":[function(require,module,exports) {
