@@ -551,7 +551,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 function makeOrbiter() {
     const orbiter = new _threeModuleJs.Group();
-    const material = new _threeModuleJs.MeshLambertMaterial();
+    const material = new _threeModuleJs.MeshLambertMaterial({
+        color: "yellow"
+    });
     const bottom = new _threeModuleJs.Mesh(new _threeModuleJs.CylinderGeometry(1, 1, 2, 10), material);
     orbiter.add(bottom);
     const top = new _threeModuleJs.Mesh(new _threeModuleJs.ConeGeometry(1, PI / 2, 10), material);
@@ -566,7 +568,9 @@ function makeOrbiter() {
 }
 function makeLander() {
     const lander = new _threeModuleJs.Group();
-    const material = new _threeModuleJs.MeshLambertMaterial();
+    const material = new _threeModuleJs.MeshLambertMaterial({
+        color: "purple"
+    });
     const body = new _threeModuleJs.Mesh(new _threeModuleJs.SphereGeometry(1, 6, 6), material);
     const leg1 = new _threeModuleJs.Mesh(new _threeModuleJs.CylinderGeometry(0.1, 0.1, 4, 4), material);
     const leg2 = new _threeModuleJs.Mesh(new _threeModuleJs.CylinderGeometry(0.1, 0.1, 4, 4), material);
