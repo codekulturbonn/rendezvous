@@ -7,7 +7,7 @@ const PI = 3.141592;
 let gameState = "play";
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x333333);
+//scene.background = new THREE.Color(0x333333);
 scene.add(new THREE.AxesHelper(5));
 const light = new THREE.PointLight(0xffffff, 2);
 light.position.set(10, 10, 10);
@@ -20,7 +20,7 @@ const camera = new THREE.PerspectiveCamera(
     1000
 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
