@@ -26,7 +26,9 @@ document.body.appendChild(renderer.domElement);
 
 function makeOrbiter() {
     const orbiter = new THREE.Group();
-    const material = new THREE.MeshLambertMaterial();
+    const material = new THREE.MeshLambertMaterial({
+        color:"yellow"
+    });
 
     const bottom = new THREE.Mesh(
         new THREE.CylinderGeometry(1, 1, 2, 10),
@@ -50,7 +52,9 @@ function makeOrbiter() {
 
 function makeLander() {
     const lander = new THREE.Group();
-    const material = new THREE.MeshLambertMaterial();
+    const material = new THREE.MeshLambertMaterial({
+        color:"purple"
+    });
     const body = new THREE.Mesh(new THREE.SphereGeometry(1, 6, 6), material);
     const leg1 = new THREE.Mesh(
         new THREE.CylinderGeometry(0.1, 0.1, 4, 4),
